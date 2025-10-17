@@ -17,7 +17,7 @@ A web application designed to help young users track their productivity and ment
 ## 🧱 Tech Stack (to be confirmed)
 
 - **Backend**: Flask (Python)
-- **Frontend**: React or other (to be discussed)
+- **Frontend**: React or other (to be comfirmed)
 - **Database**: SQLite or PostgreSQL
 - **Version Control**: Git + GitHub
 
