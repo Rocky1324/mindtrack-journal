@@ -26,6 +26,10 @@ Backend (Flask)
 `-- /feedback      -> suggestions, reminders, encouragement
 
 
+
+
+
+
 ## 3. 🗃️ Database Schema (to be confirmed)
 
 - **User**
@@ -65,5 +69,6 @@ Backend (Flask)
 - Backend unit tests (pytest)
 - Deployment via Render / Railway / Vercel
 - CI/CD pipeline (to be discussed)
+
 
 
