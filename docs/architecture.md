@@ -11,19 +11,24 @@ Build a web app that helps young users track their productivity and mental well-
 ---
 
 ## 2. 🧱 Proposed Modular Architecture
+<pre>
 Frontend (React or other)
-|-- Auth UI          -> login, signup
-|-- Questionnaire UI -> onboarding flow
-|-- Journal UI       -> daily entries
-`-- Dashboard        -> progress tracking
+│
+├── Auth UI           → login, signup
+├── Questionnaire UI  → onboarding flow
+├── Journal UI        → daily entries
+└── Dashboard         → progress tracking
 
 Backend (Flask)
-|-- /auth          -> login, signup, token handling
-|-- /profile       -> user profile creation
-|-- /questionnaire -> receive answers
-|-- /plan          -> generate personalized plan
-|-- /journal       -> save daily entries
-`-- /feedback      -> suggestions, reminders, encouragement
+│
+├── /auth             → login, signup, token handling
+├── /profile          → user profile creation
+├── /questionnaire    → receive answers
+├── /plan             → generate personalized plan
+├── /journal          → save daily entries
+└── /feedback         → suggestions, reminders, encouragement
+</pre>
+
 
 
 
@@ -69,6 +74,7 @@ Backend (Flask)
 - Backend unit tests (pytest)
 - Deployment via Render / Railway / Vercel
 - CI/CD pipeline (to be discussed)
+
 
 
 
