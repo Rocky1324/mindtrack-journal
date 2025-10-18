@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ def home():
 @app.route('/register', methods=['POST'])
 def register():
     # Placeholder for login logic
-    return jsonify({"status": "Login route hit"})
+    return jsonify({"status": "Register route hit"})
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -19,7 +19,7 @@ def login():
 @app.route('/logout', methods=['POST'])
 def logout():
     # Placeholder for login logic
-    return jsonify({"status": "Login route hit"})
+    return jsonify({"status": "Logout route hit"})
 
 @app.route('/profile', methods=['POST'])
 def create_profile():
