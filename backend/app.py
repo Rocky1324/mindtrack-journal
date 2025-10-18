@@ -6,8 +6,18 @@ app = Flask(__name__)
 def home():
     return jsonify({"message": "Welcome to MindTrack Journal API"})
 
+@app.route('/register', methods=['POST'])
+def register():
+    # Placeholder for login logic
+    return jsonify({"status": "Login route hit"})
+
 @app.route('/login', methods=['POST'])
 def login():
+    # Placeholder for login logic
+    return jsonify({"status": "Login route hit"})
+
+@app.route('/logout', methods=['POST'])
+def logout():
     # Placeholder for login logic
     return jsonify({"status": "Login route hit"})
 
