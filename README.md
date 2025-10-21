@@ -27,19 +27,11 @@ This prototype was initially developed in French for personal testing and has be
    git clone <repo-url>
    cd <repo-folder>
    ```
-2. Create a virtual environment and install dependencies:
-
-```bash
-python -m venv venv
-venv\Scripts\activate  # Windows
-pip install -r requirements.txt
-```
-
-3. Run the Flask app:
+2. Run the Flask app:
 
 flask run
 
-4. Open your browser at http://127.0.0.1:5000 to test the prototype
+3. Open your browser at http://127.0.0.1:5000 to test the prototype
 
 ---
 
