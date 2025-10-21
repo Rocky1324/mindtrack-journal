@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindTrack - Productivity & Wellness Tracking</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #ccfbf1 50%, #d1fae5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 2rem;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #6b7280;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            color: #6b7280;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            border-color: #14b8a6;
+            color: #14b8a6;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .gradient-card {
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid #86efac;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card:nth-child(2) {
+            border-color: #93c5fd;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .notification-card {
+            background: linear-gradient(135deg, #faf5ff 0%, #fce7f3 100%);
+            border: 1px solid #e9d5ff;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .notification-icon {
+            background: #e9d5ff;
+            border-radius: 50%;
+            padding: 8px;
+            flex-shrink: 0;
+        }
+
+        .mood-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .mood-btn {
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .mood-btn:hover {
+            border-color: #d1d5db;
+        }
+
+        .mood-btn.active {
+            border-color: #14b8a6;
+            background: #f0fdfa;
+            transform: scale(1.05);
+        }
+
+        .mood-emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .mood-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #14b8a6;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #14b8a6 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .entries-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .entry-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .entry-date {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .entry-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .entry-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-top: 20px;
+        }
+
+        .insights-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #86efac;
+        }
+
+        .insight-item {
+            margin: 8px 0;
+            color: #1f2937;
+            font-size: 0.875rem;
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 16px;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            max-width: 400px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #6b7280;
+        }
+
+        .nav-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .nav-btn.active {
+            background: #ccfbf1;
+            color: #0f766e;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 2px solid #ccfbf1;
+            border-radius: 12px;
+            padding: 16px 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 1.125rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toast" id="toast"></div>
+
+        <div class="header">
+            <div class="header-left">
+                <h1>MindTrack</h1>
+                <p>Hello {{ username }} 👋</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Log out</button>
+        </div>
+
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="card gradient-card">
+                <h2>Your weekly summary</h2>
+                <p style="color: #6b7280;">Here are your statistics for the last 7 days</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.75rem;">✅</span>
+                        <span style="font-size: 1.25rem; color: #86efac;">📈</span>
+                    </div>
+                    <div class="stat-value" id="total-tasks">0</div>
+                    <div class="stat-label">Tasks completed</div>
+                </div>
+
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.75rem;">😊</span>
+                        <span style="font-size: 1.25rem; color: #93c5fd;">🏆</span>
+                    </div>
+                    <div class="stat-value" id="avg-mood">0</div>
+                    <div class="stat-label">Average mood</div>
+                </div>
+            </div>
+
+            <div class="card notification-card">
+                <div class="notification-icon">
+                    <span style="font-size: 1.25rem;">🔔</span>
+                </div>
+                <div>
+                    <p style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">Keep it up!</p>
+                    <p style="font-size: 0.875rem; color: #6b7280;" id="motivation-text">
+                        Loading...
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📅 Week overview</h3>
+                <div id="recent-entries"></div>
+            </div>
+        </div>
+
+        <!-- Journal Page -->
+        <div id="journal" class="page">
+            <div class="card gradient-card">
+                <h2>📅 Daily journal</h2>
+                <p style="color: #6b7280;">Record your day and how you feel</p>
+            </div>
+
+            <div class="card">
+                <label>How do you feel today?</label>
+                <div class="mood-selector">
+                    <button class="mood-btn" data-mood="1">
+                        <span class="mood-emoji">😢</span>
+                        <span class="mood-label">Very hard</span>
+                    </button>
+                    <button class="mood-btn" data-mood="2">
+                        <span class="mood-emoji">😕</span>
+                        <span class="mood-label">Hard</span>
+                    </button>
+                    <button class="mood-btn active" data-mood="3">
+                        <span class="mood-emoji">😐</span>
+                        <span class="mood-label">Neutral</span>
+                    </button>
+                    <button class="mood-btn" data-mood="4">
+                        <span class="mood-emoji">😊</span>
+                        <span class="mood-label">Good</span>
+                    </button>
+                    <button class="mood-btn" data-mood="5">
+                        <span class="mood-emoji">😄</span>
+                        <span class="mood-label">Excellent</span>
+                    </button>
+                </div>
+
+                <label>Number of tasks completed</label>
+                <input type="number" id="tasks-input" min="0" max="50" value="0" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 1rem;">
+
+                <label style="margin-top: 16px;">What did you do today?</label>
+                <textarea id="activity-input" placeholder="Describe your activities, achievements, or simply your day..."></textarea>
+
+                <button class="btn" onclick="saveEntry()">➕ Save</button>
+            </div>
+
+            <div class="card">
+                <h3>Your recent entries</h3>
+                <div class="entries-list" id="all-entries"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page">
+            <div class="card gradient-card" style="background: linear-gradient(135deg, #faf5ff 0%, #dbeafe 100%); border-color: #e9d5ff;">
+                <h2>📊 Dashboard</h2>
+                <p style="color: #6b7280;">Visualize your trends and progress</p>
+            </div>
+
+            <div class="card">
+                <h3>Weekly productivity</h3>
+                <div class="chart-container">
+                    <canvas id="tasks-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Mood evolution</h3>
+                <div class="chart-container">
+                    <canvas id="mood-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="card insights-card">
+                <h3>📈 Trend analysis</h3>
+                <div class="insight-item">✨ Your mood is stable this week with an average of <span id="insight-mood">0</span>/5</div>
+                <div class="insight-item" id="insight-productivity"></div>
+                <div class="insight-item">💪 Keep maintaining this balance between productivity and wellness</div>
+            </div>
+        </div>
+
+        <!-- Navigation bar -->
+        <nav class="nav-bar">
+            <button class="nav-btn active" onclick="changePage('home')">
+                <span class="nav-icon">✅</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-btn" onclick="changePage('journal')">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Journal</span>
+            </button>
+            <button class="nav-btn" onclick="changePage('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Stats</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        let currentMood = 3;
+        let entries = [];
+        let tasksChart = null;
+        let moodChart = null;
+
+        // Navigation
+        function changePage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(page).classList.add('active');
+            event.target.closest('.nav-btn').classList.add('active');
+            
+            if (page === 'dashboard') {
+                loadCharts();
+            }
+        }
+
+        // Logout
+        function logout() {
+            window.location.href = '/logout';
+        }
+
+        // Mood selection
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentMood = parseInt(this.dataset.mood);
+            });
+        });
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 5000);
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                const response = await fetch('/api/entries');
+                entries = await response.json();
+                updateUI();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('❌ Error loading data');
+            }
+        }
+
+        // Save entry
+        async function saveEntry() {
+            const activity = document.getElementById('activity-input').value.trim();
+            const tasks = parseInt(document.getElementById('tasks-input').value) || 0;
+            
+            if (!activity) {
+                showToast('⚠️ Please describe your day');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mood: currentMood,
+                        activity: activity,
+                        tasks: tasks
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('🎉 Great! Your entry has been saved successfully.');
+                    document.getElementById('activity-input').value = '';
+                    document.getElementById('tasks-input').value = '0';
+                    currentMood = 3;
+                    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelector('[data-mood="3"]').classList.add('active');
+                    await loadData();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('❌ Error saving entry');
+            }
+        }
+
+        // Delete entry
+        async function deleteEntry(entryId) {
+            if (!confirm('Are you sure you want to delete this entry?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/entries/${entryId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('🗑️ Entry deleted successfully');
+                    await loadData();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('❌ Error deleting entry');
+            }
+        }
+
+        // Update UI
+        async function updateUI() {
+            try {
+                const statsResponse = await fetch('/api/stats');
+                const stats = await statsResponse.json();
+
+                document.getElementById('total-tasks').textContent = stats.total_tasks;
+                document.getElementById('avg-mood').textContent = stats.avg_mood + '/5';
+                document.getElementById('insight-mood').textContent = stats.avg_mood;
+                
+                const increase = stats.tasks_increase;
+                const increaseText = increase >= 0 ? 
+                    `You completed ${stats.total_tasks} tasks this week. That's ${increase} more than last week! 🌟` :
+                    `You completed ${stats.total_tasks} tasks this week. Keep going, every small step counts! 💪`;
+                
+                document.getElementById('motivation-text').textContent = increaseText;
+
+                // Productivity insight
+                const maxTasks = Math.max(...entries.map(e => e.tasks), 0);
+                const maxDay = entries.find(e => e.tasks === maxTasks);
+                const productivityText = maxDay ? 
+                    `🎯 Your most productive day: ${maxDay.date} with ${maxDay.tasks} tasks` :
+                    `🎯 Start recording your tasks to see your trends`;
+                document.getElementById('insight-productivity').textContent = productivityText;
+
+                // Recent entries overview
+                const recentDiv = document.getElementById('recent-entries');
+                if (entries.length === 0) {
+                    recentDiv.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">No entries this week. Start your journal today! 📝</p>';
+                } else {
+                    recentDiv.innerHTML = entries.slice(-3).reverse().map(entry => `
+                        <div class="entry-item">
+                            <div class="entry-header">
+                                <div class="entry-date">${entry.date}</div>
+                                <div class="entry-meta">
+                                    <span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-weight: 500;">
+                                        ${entry.tasks} tasks
+                                    </span>
+                                    <span>${getMoodEmoji(entry.mood)}</span>
+                                </div>
+                            </div>
+                            <p style="color: #6b7280; font-size: 0.875rem;">${entry.activity}</p>
+                        </div>
+                    `).join('');
+                }
+
+                // All entries with delete button
+                const allEntriesDiv = document.getElementById('all-entries');
+                if (entries.length === 0) {
+                    allEntriesDiv.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">Start your journal by recording your first entry! 🌱</p>';
+                } else {
+                    allEntriesDiv.innerHTML = entries.slice().reverse().map(entry => `
+                        <div class="entry-item">
+                            <button class="delete-btn" onclick="deleteEntry(${entry.id})">Delete</button>
+                            <div class="entry-header">
+                                <div class="entry-date">${entry.date}</div>
+                                <div class="entry-meta">
+                                    <span>${getMoodEmoji(entry.mood)}</span>
+                                    <span>${entry.tasks} tasks</span>
+                                </div>
+                            </div>
+                            <p style="color: #6b7280; font-size: 0.875rem;">${entry.activity}</p>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function getMoodEmoji(mood) {
+            const emojis = { 1: '😢', 2: '😕', 3: '😐', 4: '😊', 5: '😄' };
+            return emojis[mood] || '😐';
+        }
+
+        // Load charts
+        function loadCharts() {
+            if (entries.length === 0) return;
+
+            // Tasks chart
+            const tasksCtx = document.getElementById('tasks-chart');
+            if (tasksChart) tasksChart.destroy();
+            
+            tasksChart = new Chart(tasksCtx, {
+                type: 'bar',
+                data: {
+                    labels: entries.map(e => e.date),
+                    datasets: [{
+                        label: 'Tasks',
+                        data: entries.map(e => e.tasks),
+                        backgroundColor: '#14b8a6',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' tasks completed';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Mood chart
+            const moodCtx = document.getElementById('mood-chart');
+            if (moodChart) moodChart.destroy();
+            
+            moodChart = new Chart(moodCtx, {
+                type: 'line',
+                data: {
+                    labels: entries.map(e => e.date),
+                    datasets: [{
+                        label: 'Mood',
+                        data: entries.map(e => e.mood),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            min: 0, 
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const labels = ['', 'Very hard', 'Hard', 'Neutral', 'Good', 'Excellent'];
+                                    return labels[context.parsed.y] || context.parsed.y;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load data on startup
+        loadData();
+    </script>
+</body>
+</html>
