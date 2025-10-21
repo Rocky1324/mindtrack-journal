@@ -29,9 +29,11 @@ This prototype was initially developed in French for personal testing and has be
    ```
 2. Create a virtual environment and install dependencies:
 
+```bash
 python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r requirements.txt
+```
 
 3. Run the Flask app:
 
