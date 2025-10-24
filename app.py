@@ -3,8 +3,10 @@ from flask_login import LoginManager, current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from .models import User, Base
 import os
+from dotenv import load_dotenv
 
 
+load_dotenv()
 app = Flask(__name__)
 login_manager = LoginManager()
 app.secret_key = os.getenv("SECRET_KEY")
