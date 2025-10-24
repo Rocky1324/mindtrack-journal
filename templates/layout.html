@@ -5,6 +5,11 @@
     <title>{% block title %}Mindtrack{% endblock %}</title>
   </head>
   <body>
+   <div class="topnav">
+ <a class="active" href="{{ url_for('index') }}">Home</a>
+<a href="{{ url_for('register') }}">Register</a>
+<a href="{{ url_for('login') }}">Login</a>
+</div>
     <main>
     <div id="content">
       {% block content %}
