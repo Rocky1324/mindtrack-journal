@@ -3,14 +3,16 @@ from flask_login import LoginManager, current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from .models import User, Base
 import os
+from dotenv import load_dotenv
 
 
+load_dotenv()
 app = Flask(__name__)
 login_manager = LoginManager()
 app.secret_key = os.getenv("SECRET_KEY")
 login_manager.init_app(app)
 db = SQLAlchemy(model_class=Base)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mindtrack.db"
 db.init_app(app)
 
 
