@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request, render_template
-from flask_login import LoginManager, current_user, login_required
+from flask_login import LoginManager, current_user, login_required, flash
 from flask_sqlalchemy import SQLAlchemy
 from .models import User, Base
 import os
 from dotenv import load_dotenv
-
-
 load_dotenv()
+
+
 app = Flask(__name__)
 login_manager = LoginManager()
 app.secret_key = os.getenv("SECRET_KEY")
@@ -31,6 +31,14 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm-password')
+
+        if password != confirm_password:
+            flash('Passwords do not match')
+            return render_template('register')
+        
+
+        elif password == confirm_password:
+            user = User({username, password})
     
     return render_template('register.html')
 
