@@ -1,11 +1,22 @@
-from flask import Flask, jsonify, request, render_template, os, login_required
-from flask_login import LoginManager
-login_manager = LoginManager()
+from flask import Flask, jsonify, request, render_template
+from flask_login import LoginManager, current_user, login_required
+from flask_sqlalchemy import SQLAlchemy
+from .models import User, Base
+import os
 
 
 app = Flask(__name__)
+login_manager = LoginManager()
 app.secret_key = os.getenv("SECRET_KEY")
+login_manager.init_app(app)
+db = SQLAlchemy(model_class=Base)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+db.init_app(app)
 
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 @app.route('/')
 def index():
@@ -26,10 +37,12 @@ def login():
     # Placeholder for login logic
     return render_template('login.html')
 
-@app.route('/logout', methods=['GET'])
+@app.route("/logout")
+@login_required
 def logout():
-    # Placeholder for login logic
-    return jsonify({"status": "Logout route hit"})
+
+    #logout_user()
+    render_template('index.html')
 
 
 @login_required
