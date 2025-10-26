@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_login import LoginManager, current_user, login_required, flash
 from flask_sqlalchemy import SQLAlchemy
 from .models import User, Base
+from helpers import check_username_exists
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -24,6 +25,7 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
@@ -32,13 +34,18 @@ def register():
         password = request.form.get('password')
         confirm_password = request.form.get('confirm-password')
 
+
         if password != confirm_password:
             flash('Passwords do not match')
-            return render_template('register')
+            return render_template('register.html')
         
-
-        elif password == confirm_password:
-            new_user = User(username=username, password=password)
+        if check_username_exists(username=username):
+            flash('This user already exists, please log in')
+            return redirect(url_for('login'))
+        
+        else:
+            new_user = User(username=username)
+            new_user.set_password(password)
             db.session.add(new_user)
             db.session.commit()
             flash('Registration successful!')
