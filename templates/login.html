@@ -5,12 +5,11 @@
 {% block content %}
   <h1>Login</h1>
     <div>
-    <form>
+    <form method="POST" action="{{ url_for('login') }}">
       <label for="username"></label>Username:
-      <input name="username">
+      <input name="username" id="username" type="text">
        <label for="password"></label>Password:
-      <input name="password">
-      <button>Sign In</button>
-    </form>
-  </div>
+      <input name="password" id="password" type="password">
+      <button type="submit">Sign In</button>
+      </form>
 {% endblock %}
