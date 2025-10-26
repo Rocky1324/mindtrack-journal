@@ -5,14 +5,14 @@
 {% block content %}
   <h1>Sign Up</h1>
   <div>
-    <form>
+    <form method="POST" action="{{ url_for('register') }}">
       <label for="username"></label>Username:
-      <input name="username">
+      <input name="username" id="username" type="text">
        <label for="password"></label>Password:
-      <input name="password">
+      <input name="password" id="password" type="password">
        <label for="confirm-password"></label>Confirm Password:
-      <input name="confirm-password">
-      <button>Register</button>
+      <input name="confirm-password" id="confirm-password" type="password">
+      <button type="submit">Register</button>
     </form>
   </div>
 {% endblock %}
