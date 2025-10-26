@@ -67,13 +67,13 @@ def logout():
 
 
 @login_required
-@app.route('/profile', methods=['POST'])
+@app.route('/profile', methods=['GET','POST'])
 def create_profile():
     # Placeholder for profile creation
     return jsonify({"status": "Profile created"})
 
 
-@app.route('/questionnaire', methods=['POST'])
+@app.route('/questionnaire', methods=['GET', 'POST'])
 @login_required
 def generate_plan():
     # Placeholder for questionnaire logic
