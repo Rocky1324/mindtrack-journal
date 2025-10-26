@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_login import LoginManager, current_user, login_required, flash
 from flask_sqlalchemy import SQLAlchemy
 from .models import User, Base
@@ -38,7 +38,12 @@ def register():
         
 
         elif password == confirm_password:
-            user = User({username, password})
+            new_user = User(username=username, password=password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration successful!')
+            return redirect(url_for('login'))
+
     
     return render_template('register.html')
 
