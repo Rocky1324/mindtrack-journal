@@ -34,22 +34,21 @@ def register():
         password = request.form.get('password')
         confirm_password = request.form.get('confirm-password')
 
-
         if password != confirm_password:
             flash('Passwords do not match')
-            return render_template('register.html')
+            return redirect(url_for('register'))
         
         if check_username_exists(username=username):
             flash('This user already exists, please log in')
             return redirect(url_for('login'))
         
-        else:
-            new_user = User(username=username)
-            new_user.set_password(password)
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Registration successful!')
-            return redirect(url_for('login'))
+        
+        new_user = User(username=username)
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Registration successful!')
+        return redirect(url_for('login'))
 
     return render_template('register.html')
 
@@ -80,4 +79,6 @@ def generate_plan():
     return jsonify({"plan": "Generated plan based on answers"})
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
