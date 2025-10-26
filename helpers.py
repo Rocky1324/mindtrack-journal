@@ -1,5 +1,5 @@
-from app import db
-from .models import User
+from database import db
+from models import User
 
 def check_username_exists(username):
     query = db.session.query(User.id).filter_by(username=username)

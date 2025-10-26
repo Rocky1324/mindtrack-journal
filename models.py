@@ -1,11 +1,7 @@
 from flask_login import UserMixin
-from sqlalchemy.orm import DeclarativeBase
-from app import db
+from database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-class Base(DeclarativeBase):
-  pass
 
 
 class User(db.Model, UserMixin):

@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, request, render_template, redirect, url_for
-from flask_login import LoginManager, current_user, login_required, flash
+from flask import Flask, jsonify, request, render_template, redirect, url_for, flash
+from flask_login import LoginManager, current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from .models import User, Base
+from models import User
 from helpers import check_username_exists
 import os
 from dotenv import load_dotenv
+from database import db
 load_dotenv()
 
 
@@ -12,7 +13,6 @@ app = Flask(__name__)
 login_manager = LoginManager()
 app.secret_key = os.getenv("SECRET_KEY")
 login_manager.init_app(app)
-db = SQLAlchemy(model_class=Base)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mindtrack.db"
 db.init_app(app)
 
