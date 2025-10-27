@@ -162,11 +162,12 @@ mindtrack-journal/
 
 ---
 
-## 👥 Team Roles
+## 👥 Team
 
-- **Sanya**: Auth, profile setup, questionnaire 
-- **Nickolas**: JSON logic or AI integration
-- **Khyshnert**: Backend structure, task logging, feedback engine 
+- **Sanya**
+- **Nickolas**
+- **Khyshnert**
+- **Jesika Sapkota** 
 
 ---
 
