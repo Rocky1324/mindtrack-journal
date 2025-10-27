@@ -154,7 +154,7 @@ mindtrack-journal/
 
 ---
 
-## 📝 License
+### 📝 License
 
 This project is part of Youth Coders Hack 2025.
 
