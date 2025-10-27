@@ -901,3 +901,217 @@ h2 {
         padding: 16px;
     }
 }
+
+/* Authentication Pages */
+.auth-container {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--gray-200);
+    max-width: 480px;
+    width: 100%;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.auth-header {
+    text-align: center;
+    padding: 40px 32px 24px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    position: relative;
+}
+
+.auth-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.auth-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 800;
+    position: relative;
+    z-index: 1;
+    text-shadow: none;
+    color: white;
+}
+
+.auth-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-form {
+    padding: 32px;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.auth-footer {
+    text-align: center;
+    padding: 0 32px 32px;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 24px;
+    padding-top: 24px;
+}
+
+.auth-footer p {
+    margin: 0 0 8px 0;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.auth-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.auth-link:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.auth-features {
+    display: flex;
+    justify-content: space-around;
+    padding: 24px 32px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    flex: 1;
+}
+
+.feature-icon {
+    font-size: 24px;
+}
+
+.feature-item span:last-child {
+    font-size: 12px;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.auth-benefits {
+    padding: 32px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+}
+
+.auth-benefits h3 {
+    margin: 0 0 20px 0;
+    color: var(--gray-800);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.benefits-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-700);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.benefits-list li:last-child {
+    border-bottom: none;
+}
+
+.benefits-list strong {
+    color: var(--gray-800);
+}
+
+/* Auth page responsive */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 16px;
+        min-height: calc(100vh - 100px);
+    }
+    
+    .auth-card {
+        max-width: 100%;
+    }
+    
+    .auth-header {
+        padding: 32px 24px 20px;
+    }
+    
+    .auth-form {
+        padding: 24px;
+    }
+    
+    .auth-footer {
+        padding: 0 24px 24px;
+    }
+    
+    .auth-features {
+        padding: 20px 24px;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .feature-item {
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+    }
+    
+    .auth-benefits {
+        padding: 24px;
+    }
+    
+    .auth-header h1 {
+        font-size: 24px;
+    }
+    
+    .auth-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+    }
+}
