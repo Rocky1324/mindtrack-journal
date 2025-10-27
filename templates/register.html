@@ -1,30 +1,54 @@
 {% extends "layout.html" %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Register - MindTrack{% endblock %}
 
 {% block content %}
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-icon">🌟</div>
+        <h1>Join MindTrack</h1>
+        <p>Start your wellness journey today</p>
+      </div>
 
-  <h1>Sign Up</h1>
+      <div class="form-container">
+        <form method="POST" action="{{ url_for('register') }}" class="auth-form">
+          <div class="form-group">
+            <label for="username">👤 Username</label>
+            <input name="username" id="username" type="text" placeholder="Choose a unique username" required>
+          </div>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul>
-      {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-{% endwith %}
+          <div class="form-group">
+            <label for="password">🔒 Password</label>
+            <input name="password" id="password" type="password" placeholder="Create a strong password" required>
+          </div>
 
-  <div>
-    <form method="POST" action="{{ url_for('register') }}">
-      <label for="username"></label>Username:
-      <input name="username" id="username" type="text">
-       <label for="password"></label>Password:
-      <input name="password" id="password" type="password">
-       <label for="confirm-password"></label>Confirm Password:
-      <input name="confirm-password" id="confirm-password" type="password">
-      <button type="submit">Register</button>
-    </form>
+          <div class="form-group">
+            <label for="confirm-password">🔐 Confirm Password</label>
+            <input name="confirm-password" id="confirm-password" type="password" placeholder="Confirm your password" required>
+          </div>
+
+          <button type="submit" class="btn btn-success auth-btn">
+            🚀 Create Account
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Already have an account?</p>
+          <a href="{{ url_for('login') }}" class="auth-link">Sign In</a>
+        </div>
+      </div>
+
+      <div class="auth-benefits">
+        <h3>🎯 What you'll get:</h3>
+        <ul class="benefits-list">
+          <li>📊 <strong>Analytics Dashboard</strong> - Track your wellness trends</li>
+          <li>📝 <strong>Personal Journal</strong> - Reflect on your daily experiences</li>
+          <li>🧠 <strong>Mood Tracking</strong> - Monitor your emotional well-being</li>
+          <li>💡 <strong>Personalized Insights</strong> - Get recommendations based on your data</li>
+          <li>📈 <strong>Progress Visualization</strong> - See your growth over time</li>
+        </ul>
+      </div>
+    </div>
   </div>
 {% endblock %}
