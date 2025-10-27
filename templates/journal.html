@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block title %}My Personal Journal{% endblock %}
+
+{% block content %}
+  <h1>📖 My Personal Journal</h1>
+
+  <div class="journal-container">
+    <div class="new-entry-section">
+      <h2>✍️ Write a New Entry</h2>
+      <form method="POST" action="{{ url_for('journal') }}">
+        <div class="form-group">
+          <label for="entry">💭 How was your day? What's on your mind?</label>
+          <textarea name="entry" id="entry" rows="8" placeholder="Write about your thoughts, feelings, experiences of the day..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="mood_rating">😊 Rate your overall mood today (1-10):</label>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <input type="range" name="mood_rating" id="mood_rating" min="1" max="10" value="5" required>
+            <span id="mood_value" class="range-value">5</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--gray-500);">
+            <span>😢 Very sad</span>
+            <span>😄 Very happy</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 Save Entry</button>
+      </form>
+    </div>
+
+    <div class="entries-section">
+      <h2>📚 Previous Entries</h2>
+      {% if entries %}
+        {% for entry in entries %}
+        <div class="journal-entry">
+          <div class="entry-header">
+            <span class="entry-date">📅 {{ entry.created_at.strftime('%B %d, %Y at %H:%M') }}</span>
+            <span class="mood-badge">Mood: {{ entry.mood_rating }}/10</span>
+          </div>
+          <div class="entry-content">
+            {{ entry.content }}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align: center; padding: 40px; color: var(--gray-500);">
+          <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+          <p>No journal entries yet.</p>
+          <p>Start writing to track your thoughts and feelings!</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    const moodSlider = document.getElementById('mood_rating');
+    const moodValue = document.getElementById('mood_value');
+    
+    moodSlider.oninput = function() {
+      moodValue.innerHTML = this.value;
+      
+      // Change color and emoji based on mood
+      const level = parseInt(this.value);
+      if (level <= 3) {
+        moodValue.style.background = 'var(--danger-color)';
+      } else if (level <= 6) {
+        moodValue.style.background = 'var(--warning-color)';
+      } else {
+        moodValue.style.background = 'var(--success-color)';
+      }
+    }
+
+    // Auto-resize textarea
+    const textarea = document.getElementById('entry');
+    textarea.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+  </script>
+
+{% endblock %}

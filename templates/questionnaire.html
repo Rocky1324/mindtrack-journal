@@ -1,11 +1,73 @@
 {% extends "layout.html" %}
 
-{% block title %}Questionnaire{% endblock %}
+{% block title %}Wellness Questionnaire{% endblock %}
 
 {% block content %}
-  <h1>Questionnaire</h1>
-  <div>
-    
+  <h1>🧠 Daily Wellness Questionnaire</h1>
+  
+  <div class="form-container">
+    <form method="POST" action="{{ url_for('questionnaire') }}">
+      <div class="form-group">
+        <label for="mood">😊 How are you feeling today?</label>
+        <select name="mood" id="mood" required>
+          <option value="">Select your mood</option>
+          <option value="excellent">🌟 Excellent</option>
+          <option value="good">😊 Good</option>
+          <option value="okay">😐 Okay</option>
+          <option value="poor">😔 Poor</option>
+          <option value="terrible">😞 Terrible</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="sleep_hours">😴 How many hours did you sleep last night?</label>
+        <input type="number" name="sleep_hours" id="sleep_hours" min="0" max="24" step="0.5" placeholder="8.0" required>
+      </div>
+
+      <div class="form-group">
+        <label for="exercise">🏃 Did you exercise today?</label>
+        <select name="exercise" id="exercise" required>
+          <option value="">Select an option</option>
+          <option value="none">❌ No exercise</option>
+          <option value="light">🚶 Light exercise (walking, stretching)</option>
+          <option value="moderate">🚴 Moderate exercise (jogging, cycling)</option>
+          <option value="intense">🏋️ Intense exercise (running, weightlifting)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="stress_level">😰 Rate your stress level (1-10):</label>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <input type="range" name="stress_level" id="stress_level" min="1" max="10" value="5" required>
+          <span id="stress_value" class="range-value">5</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--gray-500);">
+          <span>😌 Very calm</span>
+          <span>😰 Very stressed</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">✨ Submit Questionnaire</button>
+    </form>
   </div>
 
-  {% endblock %}
+  <script>
+    const stressSlider = document.getElementById('stress_level');
+    const stressValue = document.getElementById('stress_value');
+    
+    stressSlider.oninput = function() {
+      stressValue.innerHTML = this.value;
+      
+      // Change color based on stress level
+      const level = parseInt(this.value);
+      if (level <= 3) {
+        stressValue.style.background = 'var(--success-color)';
+      } else if (level <= 6) {
+        stressValue.style.background = 'var(--warning-color)';
+      } else {
+        stressValue.style.background = 'var(--danger-color)';
+      }
+    }
+  </script>
+
+{% endblock %}

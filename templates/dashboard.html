@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <h1>👋 Welcome back, {{ user.username }}!</h1>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <h3 data-icon="⚡">Quick Actions</h3>
+      <div class="action-buttons">
+        <a href="{{ url_for('questionnaire') }}" class="btn btn-primary">📋 Daily Questionnaire</a>
+        <a href="{{ url_for('journal') }}" class="btn btn-secondary">✍️ Write Journal Entry</a>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-value">{{ entries|length if entries else 0 }}</span>
+          <span class="stat-label">Journal Entries</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">{{ "Today" if latest_response and latest_response.created_at.date() == today else "None" }}</span>
+          <span class="stat-label">Questionnaire</span>
+        </div>
+      </div>
+    </div>
+
+    {% if latest_response %}
+    <div class="dashboard-card">
+      <h3 data-icon="📊">Latest Wellness Check</h3>
+      <p><strong>📅 Date:</strong> {{ latest_response.created_at.strftime('%B %d, %Y at %H:%M') }}</p>
+      <p><strong>😊 Mood:</strong> 
+        {% if latest_response.mood == 'excellent' %}🌟 Excellent
+        {% elif latest_response.mood == 'good' %}😊 Good
+        {% elif latest_response.mood == 'okay' %}😐 Okay
+        {% elif latest_response.mood == 'poor' %}😔 Poor
+        {% else %}😞 Terrible{% endif %}
+      </p>
+      <p><strong>😴 Sleep:</strong> {{ latest_response.sleep_hours }} hours</p>
+      <p><strong>🏃 Exercise:</strong> 
+        {% if latest_response.exercise == 'none' %}❌ None
+        {% elif latest_response.exercise == 'light' %}🚶 Light
+        {% elif latest_response.exercise == 'moderate' %}🚴 Moderate
+        {% else %}🏋️ Intense{% endif %}
+      </p>
+      <p><strong>😰 Stress:</strong> {{ latest_response.stress_level }}/10</p>
+    </div>
+    {% endif %}
+
+    <div class="dashboard-card">
+      <h3 data-icon="📖">Recent Journal Entries</h3>
+      {% if entries %}
+        {% for entry in entries %}
+        <div class="journal-preview">
+          <p class="entry-date">📅 {{ entry.created_at.strftime('%B %d, %Y at %H:%M') }}</p>
+          <p class="entry-content">{{ entry.content[:120] }}{% if entry.content|length > 120 %}...{% endif %}</p>
+          <p class="mood-rating">😊 Mood: {{ entry.mood_rating }}/10</p>
+        </div>
+        {% endfor %}
+        <a href="{{ url_for('journal') }}" class="view-all-link">📚 View all entries</a>
+      {% else %}
+        <div style="text-align: center; padding: 20px; color: var(--gray-500);">
+          <div style="font-size: 32px; margin-bottom: 12px;">📝</div>
+          <p>No journal entries yet.</p>
+          <a href="{{ url_for('journal') }}" class="btn btn-outline" style="margin-top: 12px;">✍️ Start writing</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="dashboard-card">
+      <h3 data-icon="💡">Personalized Recommendations</h3>
+      {% if latest_response %}
+        <div>
+          {% if latest_response.stress_level > 7 %}
+            <div style="padding: 12px; background: #fef3c7; border-left: 4px solid var(--warning-color); border-radius: 8px; margin-bottom: 12px;">
+              <p><strong>🧘 High stress level</strong><br>
+              Try relaxation techniques like meditation or deep breathing.</p>
+            </div>
+          {% endif %}
+          
+          {% if latest_response.sleep_hours < 7 %}
+            <div style="padding: 12px; background: #dbeafe; border-left: 4px solid var(--primary-color); border-radius: 8px; margin-bottom: 12px;">
+              <p><strong>😴 Insufficient sleep</strong><br>
+              Aim for 7-9 hours of sleep for optimal wellness.</p>
+            </div>
+          {% endif %}
+          
+          {% if latest_response.exercise == 'none' %}
+            <div style="padding: 12px; background: #dcfce7; border-left: 4px solid var(--success-color); border-radius: 8px; margin-bottom: 12px;">
+              <p><strong>🏃 Physical activity</strong><br>
+              Try to incorporate some exercise into your day, even a short walk helps!</p>
+            </div>
+          {% endif %}
+          
+          {% if latest_response.mood in ['poor', 'terrible'] %}
+            <div style="padding: 12px; background: #fce7f3; border-left: 4px solid #ec4899; border-radius: 8px; margin-bottom: 12px;">
+              <p><strong>💚 Take care of yourself</strong><br>
+              Consider talking to someone you trust or consulting a professional.</p>
+            </div>
+          {% endif %}
+          
+          {% if latest_response.stress_level <= 3 and latest_response.sleep_hours >= 7 and latest_response.exercise != 'none' and latest_response.mood in ['good', 'excellent'] %}
+            <div style="padding: 12px; background: #dcfce7; border-left: 4px solid var(--success-color); border-radius: 8px;">
+              <p><strong>🌟 Excellent work!</strong><br>
+              You're maintaining great wellness habits. Keep it up!</p>
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div style="text-align: center; padding: 20px; color: var(--gray-500);">
+          <div style="font-size: 32px; margin-bottom: 12px;">📋</div>
+          <p>Complete the questionnaire to receive personalized recommendations!</p>
+          <a href="{{ url_for('questionnaire') }}" class="btn btn-primary" style="margin-top: 12px;">📋 Get Started</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="dashboard-card">
+      <h3 data-icon="📊">Quick Analytics</h3>
+      <div class="chart-wrapper" style="height: 200px;">
+        <canvas id="dashboardChart"></canvas>
+        <div id="dashboardLoading" class="chart-loading">Loading analytics...</div>
+        <div id="dashboardNoData" class="chart-no-data" style="display: none;">
+          <div class="icon">📊</div>
+          <p>No data for analytics yet</p>
+          <a href="{{ url_for('analytics') }}" class="btn btn-primary" style="margin-top: 12px;">📊 View Full Analytics</a>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 16px;">
+        <a href="{{ url_for('analytics') }}" class="btn btn-outline">📊 View Detailed Analytics</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dashboard mini chart
+    fetch('/api/chart-data')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('dashboardLoading').style.display = 'none';
+        
+        if (data.mood.data.length > 0) {
+          const ctx = document.getElementById('dashboardChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: data.mood.labels.slice(-7), // Last 7 days
+              datasets: [{
+                label: 'Mood',
+                data: data.mood.data.slice(-7),
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: false
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 10,
+                  grid: {
+                    color: 'rgba(0,0,0,0.05)'
+                  }
+                },
+                x: {
+                  grid: {
+                    display: false
+                  }
+                }
+              }
+            }
+          });
+        } else {
+          document.getElementById('dashboardChart').style.display = 'none';
+          document.getElementById('dashboardNoData').style.display = 'flex';
+        }
+      })
+      .catch(error => {
+        document.getElementById('dashboardLoading').style.display = 'none';
+        document.getElementById('dashboardChart').style.display = 'none';
+        document.getElementById('dashboardNoData').style.display = 'flex';
+      });
+  </script>
+
+{% endblock %}
